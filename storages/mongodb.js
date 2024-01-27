@@ -1,19 +1,60 @@
 import { MongoClient } from 'mongodb'
+
 const url = 'mongodb://localhost:27017';
-const client = new MongoClient(url);
-const dbName = 'user';
 
+const dbName = 'blogPlatform';
 
-async function main() {
-    await client.connect();
-    console.log('Connected successfully to server');
-    const db = client.db(dbName);
-    const collection = db.collection('users');
-    const findResult = await collection.find({}).toArray();
-    return findResult
-  }
+async function connectToMongoDB() {
+    const client = new MongoClient(url);
+    try {
+        await client.connect();
+        console.log('Connected successfully to MongoDB');
+        return client.db(dbName);
+    } catch (error) {
+        console.error('Error connecting to MongoDB:', error);
+        throw error;
+    }
+}
 
-  main()
-    .then(console.log)
-    .catch(console.error)
-    .finally(() => client.close());
+export async function create(collection, data) {
+    try {
+        const db = await connectToMongoDB();
+        const coll = db.collection(collection);
+        return await coll.insertOne(data);
+    } catch (e) {
+        console.log("error in create", e.message)
+        throw new Error(e.message)
+    }
+}
+
+export async function read(collection, email = false) {
+    try {
+        const db = await connectToMongoDB();
+        const coll = db.collection(collection);
+        return email ? await coll.findOne({ email }) : await coll.find({}).toArray();
+    } catch (e) {
+        console.log("error in read", e.message)
+        throw new Error(e.message)
+    }
+}
+
+export async function update(collection, user, update) {
+    try {
+        const db = await connectToMongoDB(user);
+        const coll = db.collection(collection);
+        return await coll.updateOne(user, { $set: update });
+    } catch (e) {
+        console.log("error in update", e.message)
+        throw new Error(e.message)
+    }
+}
+
+export async function del(collection, email) {
+    try {
+        const db = await connectToMongoDB();
+        const coll = db.collection(collection);
+        return await coll.deleteOne({ email });
+    } catch (e) {
+        throw new Error(e.message)
+    }
+}
