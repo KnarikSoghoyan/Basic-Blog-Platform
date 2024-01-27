@@ -1,18 +1,15 @@
 import express from "express";
+const port = 4000
+
 const app = express();
 
-const port = 4000;
+import userRouter from './users-router.js'
 
 app.use(express.json())
 
-app.get('/', (req, res) => {
-    res.send("Hello world")
-})
+app.use('/users', userRouter)
 
-app.post('/', (req, res) => {
-    res.status(201).end('POST request to homepage')
-})
 
-app.listen(port, () => {
+app.listen(port,()=> {
     console.log(`Server started at port 4000`)
 })
