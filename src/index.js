@@ -3,7 +3,7 @@ const port = 4000
 
 const app = express();
 
-import userRouter from './users-router.js'
+import userRouter from './routers/users-router.js';
 
 app.use(express.json())
 

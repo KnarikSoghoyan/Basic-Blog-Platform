@@ -4,8 +4,8 @@
   "description": "A Basic blog platform",
   "type": "module",
   "scripts": {
-    "start": "node index",
-    "dev": "nodemon index"
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
   },
   "author": "Knarik Soghoyan",
   "license": "ISC",
