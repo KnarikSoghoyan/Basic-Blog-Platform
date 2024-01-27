@@ -1,7 +1,7 @@
 import { Router } from 'express'
 const router = Router()
 
-import { create, read, update, del } from './storages/mongodb.js';
+import { create, read, update, del } from '../storages/mongodb.js';
 
 router.post('/', async (req, res) => {
     try {
