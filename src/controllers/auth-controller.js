@@ -4,13 +4,17 @@ import { createUserToken, verifyToken } from '../libs/token-lib.js';
 
 export async function loginUser (req, res) {
     try{
-        const { email, password} = req.body      //repeatPassword
-        const user = await read ('users',email)
+        const { username, email, password} = req.body      // _id, repeatPassword
+        const user = await read ('users',email)  // _id
 
         const token = await createUserToken(req.body);
-        console.log (token, "token")
+        // console.log (token, "token") 
         const verifiedToken = await verifyToken(token);
-        console.log (verifiedToken, "verified token")
+        // console.log (verifiedToken, "verified token")
+
+        const {authorization} = req.headers
+        const checkAuthorization = await verifyToken(authorization);
+        // console.log(checkAuthorization);
 
         res.status(201).send({data:user,token})   
     } catch (e) {
