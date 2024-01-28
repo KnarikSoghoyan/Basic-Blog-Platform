@@ -1,15 +1,17 @@
 import { create, read } from '../storages/mongodb.js';
+import { createUserToken, verifyToken } from '../libs/token-lib.js';
+
 
 export async function loginUser (req, res) {
     try{
         const { email, password} = req.body      //repeatPassword
         const user = await read ('users',email)
-        
-        const userEmail =  user.email;
-        const username =   user.username
 
-        const token =  JWT.sign({email:userEmail,username,ownerId:user._id},secret,{expiresIn: '15m'})
-        console.log (token)
+        const token = await createUserToken(req.body);
+        console.log (token, "token")
+        const verifiedToken = await verifyToken(token);
+        console.log (verifiedToken, "verified token")
+
         res.status(201).send({data:user,token})   
     } catch (e) {
         res.status(404).send({data:e.message})
