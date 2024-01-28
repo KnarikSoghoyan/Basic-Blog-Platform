@@ -1,7 +1,6 @@
 import { MongoClient } from 'mongodb'
 const { MONGO_URL } = process.env;
-
-const dbName = 'blogPlatform';
+const { dbName } = process.env;
 
 async function connectToMongoDB() {
     const client = new MongoClient(MONGO_URL);
