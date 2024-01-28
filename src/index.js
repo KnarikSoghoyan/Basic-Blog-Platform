@@ -1,5 +1,10 @@
 import express from "express";
-const port = 4000
+
+import {} from "dotenv/config"
+// import dotenv from 'dotenv'
+// dotenv.config()
+
+const { port } = process.env;
 
 const app = express();
 
@@ -11,5 +16,5 @@ app.use('/users', userRouter)
 
 
 app.listen(port,()=> {
-    console.log(`Server started at port 4000`)
+    console.log(`Server started at port ${port}`)
 })
