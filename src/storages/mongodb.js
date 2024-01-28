@@ -1,11 +1,10 @@
 import { MongoClient } from 'mongodb'
-
-const url = 'mongodb://localhost:27017';
+const { MONGO_URL } = process.env;
 
 const dbName = 'blogPlatform';
 
 async function connectToMongoDB() {
-    const client = new MongoClient(url);
+    const client = new MongoClient(MONGO_URL);
     try {
         await client.connect();
         console.log('Connected successfully to MongoDB');
