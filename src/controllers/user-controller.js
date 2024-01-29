@@ -1,44 +1,42 @@
-import { create, read, update, del } from '../storages/mongodb.js';
+import { User } from '../models/user-model.js';
+import { createUserToken } from '../libs/token-lib.js';
 
-export async function createUser (req, res) {
-    try {
-        // const { username, email, password, repeatPassword, gender, birthday} = req.body;
-        await create("users", req.body)
-        res.status(201).send({ data: "User successfully created" })
-    } catch (e) {
-        res.status(404).send({ data: "User already exists!!!!" })
-    }
-};
 
-export async function readUser (req, res) {
+async function registration(req, res) {
     try {
-        const { email } = req.params
-        const users = await read('users', email);
-        res.status(200).send({ data: users })
-    } catch (e) {
-        res.status(404).send({ data: 'Something happened' })
-    }
-};
+        const { username, email, password, repeatPassword } = req.body
 
-export async function updateUser (req, res) {
-    try {
-        const { email, username } = req.body
-        await update('users', { email }, { username })
-        res.status(200).send({ data: "User successfully updated" })
-    } catch (e) {
-        res.status(404).send({ data: "User is not updated" })
-    }
-};
+        if (password !== repeatPassword) {
+            throw new Error('Passwords does not match')
+        }
 
-export async function deleteUser (req, res) {
-    try {
-        const { email } = req.params;
-        await del('users', email);
-        res.status(200).send({ data: "User successfully deleted" })
-        // const deletedUser = await del('users', email );
-        // res.status(200).send({ data:deletedUser })
+        const user = await User.create({ username, email, password });
+        res.status(201).send({ data: user });
     } catch (e) {
-        res.status(404).send({ data: "User is not deleted" })
-        // res.status(404).send(e.message)
+        res.status(404).send({ data: e.message })
     }
-};
+}
+
+
+async function login(req, res) {
+    try {
+        const { username, password } = req.body
+
+        const user = await User.find({ username, password }).select('username')
+
+        if (!user.length) {
+            throw new Error("You are not registrated!!!")
+        }
+
+        const [userInfo] = user
+        console.log(userInfo, 'userInfo')
+
+        const token = await createUserToken({ _id: userInfo._id, username: userInfo.username });
+        res.status(201).send({ data: user, token })
+    } catch (e) {
+        res.status(404).send({ data: e.message })
+    }
+}
+
+
+export { registration, login }

@@ -1,20 +1,22 @@
 import express from "express";
 
-import {} from "dotenv/config"
-const { port } = process.env;
+import { } from "dotenv/config"
+const { PORT } = process.env;
+
+import { connectToMongoDB } from './storages/mongoose.js';
+
+connectToMongoDB()
 
 const app = express();
 
-import userRouter from './routers/users-router.js';
-import authRouter from './routers/auth-router.js';
+import authRouter from './routers/user-router.js';
 import postRouter from './routers/posts-router.js';
 
 app.use(express.json())
 
-app.use('/users', userRouter)
 app.use('/auth', authRouter)
 app.use('/posts', postRouter)
 
-app.listen(port,()=> {
-    console.log(`Server started at port ${port}`)
+app.listen(PORT, () => {
+    console.log(`Server started at port ${PORT}`)
 })
