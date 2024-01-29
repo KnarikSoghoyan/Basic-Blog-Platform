@@ -1,22 +1,81 @@
-import { create, read, update, del } from '../storages/mongodb.js';
-
-import moment from 'moment'
+import { Post } from '../models/post-model.js';
+import { verifyToken } from '../libs/token-lib.js';
 
 export async function createPost(req, res) {
     try {
+        const { authorization } = req.headers
+        const { title, body } = req.bodygit
 
-        // const verifiedUser = await verifyToken(authorization);
-        // console.log(verifiedUser);
+        const user = await verifyToken(authorization);
 
-        const { title, body } = req.body
-        const creationDate = moment().format('MM-DD-YYYY');
+        if (!user.length) {
+            throw new Error('You are not autorized')
+        }
 
-        await create('posts', { title, body})
+        const post = await Post.create({ author: String(user._id), title, body })
 
-        // await create('posts', { title, body, author: verifiedUser.username, creationDate, updated: false, updationDate: "", ownerId: verifiedUser._id })
-
-        res.status(201).send({ data: "Post successfully created" })
+        res.status(201).send({ data: post })
     } catch (e) {
-        res.status(404).send({ data: "Post is not created" })
+        res.status(404).send({ data: e.message })
+    }
+};
+
+export async function readPosts(req, res) {
+    try {
+        const posts = await Post.find({})
+        res.status(201).send({ data: posts })
+    } catch (e) {
+        res.status(404).send({ data: e.message })
+    }
+};
+
+export async function updatePost(req, res) {
+    try {
+        const { authorization } = req.headers
+        const { title, body } = req.body
+
+        const user = await verifyToken(authorization);
+
+        if (!user.length) {
+            throw new Error('You are not autorized')
+        }
+
+        const author = await Post.find({ title }).select('author')
+
+        if (user._id !== author[0].author) {
+            throw new Error("This posts owner is other person")
+        }
+
+        await Post.findOneAndUpdate({ title }, { $set: { body } });
+        const updatedPost = await Post.findOne({ title })
+
+        res.status(201).send({ data: updatedPost })
+    } catch (e) {
+        res.status(404).send({ data: e.message })
+    }
+};
+
+
+export async function deletePost(req, res) {
+    try {
+        const { authorization } = req.headers
+        const { title } = req.body
+
+        const user = await verifyToken(authorization);
+
+        if (!user.length) {
+            throw new Error('You are not autorized')
+        }
+
+        const author = await Post.find({ title }).select('author')
+
+        if (user._id !== author[0].author) {
+            throw new Error("This posts owner is other person")
+        }
+        const deletedPost = await Post.findOneAndDelete({ title })
+        res.status(201).send({ data: deletedPost })
+
+    } catch (e) {
+        res.status(404).send({ data: e.message })
     }
 };
