@@ -4,7 +4,7 @@ import { verifyToken } from '../libs/token-lib.js';
 export async function createPost(req, res) {
     try {
         const { authorization } = req.headers
-        const { title, body } = req.bodygit
+        const { title, body } = req.body
 
         const user = await verifyToken(authorization);
 
