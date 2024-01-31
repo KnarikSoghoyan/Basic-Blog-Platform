@@ -8,7 +8,7 @@ export async function createPost(req, res) {
 
         const user = await verifyToken(authorization);
 
-        if (!user.length) {
+        if (!user) {
             throw new Error('You are not autorized')
         }
 
@@ -36,7 +36,7 @@ export async function updatePost(req, res) {
 
         const user = await verifyToken(authorization);
 
-        if (!user.length) {
+        if (!user) {
             throw new Error('You are not autorized')
         }
 
@@ -63,7 +63,7 @@ export async function deletePost(req, res) {
 
         const user = await verifyToken(authorization);
 
-        if (!user.length) {
+        if (!user) {
             throw new Error('You are not autorized')
         }
 

@@ -5,10 +5,10 @@ const { JWT_SECRET } = process.env;
 export async function createUserToken(userInfo) {
     const {
         _id,
-        email,
+        username,
     } = userInfo;
 
-    return JWT.sign({ _id, email}, JWT_SECRET, {expiresIn: '15d'});
+    return JWT.sign({ _id, username}, JWT_SECRET, {expiresIn: '15d'});
 }
 
 export async function verifyToken(token) {
